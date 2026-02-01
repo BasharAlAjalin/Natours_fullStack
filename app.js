@@ -7,7 +7,8 @@ app.use(express.json());
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`),
 );
-app.get("/api/v1/tours", (req, res) => {
+
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
     results: tours.length,
@@ -15,25 +16,26 @@ app.get("/api/v1/tours", (req, res) => {
       tours,
     },
   });
-});
+};
 
-app.get("/api/v1/tours/:id", (req, res) => {
+const getTourById = (req, res) => {
   const id = Number(req.params.id);
   const tour = tours.find((tour) => tour.id === id);
   if (!tour) {
     return res.status(404).json({
       status: "fail",
-      message: "Invalid ID ",
+      message: "Invalid Id",
     });
   }
-  res.status(200).json({
+
+  res.stats(200).json({
     status: "success",
     data: {
       tour,
     },
   });
-});
-app.post("/api/v1/tours", (req, res) => {
+};
+const createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
   tours.push(newTour);
@@ -49,7 +51,10 @@ app.post("/api/v1/tours", (req, res) => {
       });
     },
   );
-});
+};
+
+app.route("/api/v1/tours").get(getAllTours).post(createTour);
+app.route("/api/v1/tours/:id").get(getTourById);
 const port = 3000;
 app.listen(port, () => {
   console.log(` App is listining to port ${port} `);
