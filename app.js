@@ -8,6 +8,9 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`),
 );
 
+const users = JSON.parse(
+  fs.readFileSync(`${__dirname}/dev-data/data/users.json`),
+);
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
@@ -53,8 +56,24 @@ const createTour = (req, res) => {
   );
 };
 
-app.route("/api/v1/tours").get(getAllTours).post(createTour);
-app.route("/api/v1/tours/:id").get(getTourById);
+const getAllUsers = (req, res) => {
+  res.status(200).json({
+    status: "success",
+    restuls: users.length,
+    data: {
+      users,
+    },
+  });
+};
+
+const tourRouter = express.Router();
+const userRouter = express.Router();
+tourRouter.route("/").get(getAllTours).post(createTour);
+tourRouter.route("/:id").get(getTourById);
+userRouter.route("/").get(getAllUsers).post(createUser);
+userRouter.route("/:id").get(getUserById).patch(updateUser).delete(deleteUser);
+app.use("/api/v1/tours", tourRouter);
+app.use("/api/v1/users", userRouter);
 const port = 3000;
 app.listen(port, () => {
   console.log(` App is listining to port ${port} `);
