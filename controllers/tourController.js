@@ -51,3 +51,40 @@ exports.createTour = async (req, res) => {
     });
   }
 };
+
+exports.updateTour = async (req, res) => {
+  try {
+    const newTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(201).json({
+      status: "success",
+      data: {
+        newTour,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(400).json({
+      status: "fail",
+      message: "An error occured 👎",
+    });
+  }
+};
+
+exports.deleteTour = async (req, res) => {
+  try {
+    await Tour.findByIdAndDelete(req.params.id);
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(400).json({
+      status: "fail",
+      message: "An error occured 👎",
+    });
+  }
+};
