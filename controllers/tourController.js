@@ -1,25 +1,39 @@
 const Tour = require("./../models/tourModel");
 
-// exports.getAllTours = (req, res) => {
-//   res.status(200).json({
-//     status: "success",
-//     // results: tours.length,
-//     // data: {
-//     //   tours,
-//     // },
-//   });
-// };
+exports.getAllTours = async (req, res) => {
+  try {
+    const allTours = await Tour.find();
+    res.status(200).json({
+      status: "success",
+      results: allTours.length,
+      data: {
+        allTours,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "Fail",
+      message: "An Error occured 👎",
+    });
+  }
+};
 
-// exports.getTourById = (req, res) => {
-//   const id = Number(req.params.id);
-//   const tour = tours.find((tour) => tour.id === id);
-//   res.stats(200).json({
-//     status: "success",
-//     data: {
-//       tour,
-//     },
-//   });
-// };
+exports.getTourById = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+    res.status(200).json({
+      status: "success",
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res.stats(400).json({
+      status: "Fail",
+      message: "An Erro occured 👎",
+    });
+  }
+};
 exports.createTour = async (req, res) => {
   try {
     const newTour = await Tour.create(req.body);
@@ -33,7 +47,7 @@ exports.createTour = async (req, res) => {
     console.log(err.message);
     res.status(400).json({
       status: "fail",
-      message: "En error occured 👎",
+      message: "An error occured 👎",
     });
   }
 };
