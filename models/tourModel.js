@@ -8,6 +8,7 @@ const toursSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    slug: String,
     duration: {
       type: Number,
       required: [true, "Durations must be declared"],
@@ -53,6 +54,10 @@ const toursSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -70,6 +75,11 @@ toursSchema.pre("save", function (next) {
 
 toursSchema.post("save", function (doc, next) {
   console.log(doc);
+  next();
+});
+
+toursSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
   next();
 });
 const Tour = mongoose.model("Tour", toursSchema);
