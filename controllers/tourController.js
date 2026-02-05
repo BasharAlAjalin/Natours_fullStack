@@ -17,6 +17,7 @@ exports.getAllTours = async (req, res) => {
       },
     });
   } catch (err) {
+    console.log("🔥 getAllTours error:", err);
     res.status(404).json({
       status: "Fail",
       message: "An Error occured 👎",
