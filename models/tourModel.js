@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const slugyfi = require("slugyfi");
+const slugify = require("slugify");
 const toursSchema = new mongoose.Schema(
   {
     name: {
@@ -20,6 +20,10 @@ const toursSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, " The difficultly must be declared"],
+      enum: {
+        values: ["easy", "medium", "difficult"],
+        message: "The difficulty must be either: easy , medium , difficult",
+      },
     },
     ratingsAverage: {
       type: Number,
@@ -33,7 +37,15 @@ const toursSchema = new mongoose.Schema(
       type: Number,
       required: [true, " Tour must have a price"],
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (val) {
+          return val < this.price;
+        },
+        message: " The discount must be less than the original price",
+      },
+    },
     summary: {
       type: String,
       trim: true,
@@ -69,7 +81,7 @@ toursSchema.virtual("durationWeeks").get(function () {
 });
 
 toursSchema.pre("save", function (next) {
-  this.slug = slugyfi(this.name, { lower: true });
+  this.slug = slugify(this.name, { lower: true });
   next();
 });
 
