@@ -92,7 +92,6 @@ toursSchema.post("save", function (doc, next) {
 
 toursSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
-  next();
 });
 
 toursSchema.pre("aggregate", function (next) {
