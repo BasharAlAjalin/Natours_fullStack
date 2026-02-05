@@ -16,7 +16,7 @@ exports.getAllTours = async (req, res) => {
       const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
     } else {
-      query = query.sort("-createdAt");
+      query = query.sort("-createdAt _id");
     }
 
     if (req.query.fields) {
@@ -43,7 +43,7 @@ exports.getAllTours = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({
+    res.status(404).json({
       status: "Fail",
       message: "An Error occured 👎",
     });
