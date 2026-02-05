@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const slugyfi = require("slugyfi");
 const toursSchema = new mongoose.Schema(
   {
     name: {
@@ -60,6 +61,16 @@ const toursSchema = new mongoose.Schema(
 );
 toursSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
+});
+
+toursSchema.pre("save", function (next) {
+  this.slug = slugyfi(this.name, { lower: true });
+  next();
+});
+
+toursSchema.post("save", function (doc, next) {
+  console.log(doc);
+  next();
 });
 const Tour = mongoose.model("Tour", toursSchema);
 module.exports = Tour;
