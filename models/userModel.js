@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const { validate } = require("./tourModel");
 const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
   name: {
