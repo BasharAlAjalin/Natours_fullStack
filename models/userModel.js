@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const { validate } = require("./tourModel");
-const userScheema = new mongoose.Schema({
+const bcrypt = require("bcryptjs");
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, " User Name must be declared"],
@@ -21,10 +22,21 @@ const userScheema = new mongoose.Schema({
   passwordConfirm: {
     type: String,
     required: [true, "Please confirm your password"],
+    validate: {
+      validator: function (el) {
+        return el === this.password;
+      },
+      message: "passwords aren't the same !",
+    },
   },
   image: String,
 });
 
-const User = mongoose.model("User", userScheema);
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+});
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
