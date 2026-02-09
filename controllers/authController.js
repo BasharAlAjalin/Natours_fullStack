@@ -13,6 +13,7 @@ exports.signup = catchAsync(async (req, res) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
+    role: req.body.role,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
@@ -65,9 +66,21 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  if (newUser.passwordChangedAt(decoded.iat)) {
+  if (newUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError("User recently changed password please log in again", 401),
     );
   }
+  req.user = newUser;
+  next();
 });
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You don't have permissions to this acction", 403),
+      );
+    }
+  };
+};
