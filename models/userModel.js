@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -39,16 +40,28 @@ const userSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date,
   image: String,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
+  deleteToken: String,
+  deleteTokenExpires: Date,
 });
 
 userSchema.pre("save", function () {
   if (!this.isModified("password") || this.isNew) return;
   this.passwordChangedAt = Date.now() - 1000;
 });
+
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
   this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
+});
+
+userSchema.pre(/^find/, function () {
+  this.find({ active: { $ne: false } });
 });
 
 userSchema.methods.correctPassword = async function (
@@ -77,10 +90,23 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest("hex");
 
-  console.log({ resetToken }, this.passwordResetToken);
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
+
+userSchema.methods.createDeleteToken = function () {
+  const deleteToken = crypto.randomBytes(32).toString("hex");
+
+  this.deleteToken = crypto
+    .createHash("sha256")
+    .update(deleteToken)
+    .digest("hex");
+
+  this.deleteTokenExpires = Date.now() + 10 * 60 * 1000;
+
+  return deleteToken;
+};
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
