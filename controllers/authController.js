@@ -94,6 +94,7 @@ exports.restrictTo = (...roles) => {
         new AppError("You don't have permissions to this acction", 403),
       );
     }
+    next();
   };
 };
 
