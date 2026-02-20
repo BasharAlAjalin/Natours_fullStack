@@ -5,7 +5,7 @@ const reviewRouter = express.Router({ mergeParams: true });
 
 reviewRouter
   .route("/")
-  .get(reviewController.getAllReviews)
+  .get(reviewController.getTourId, reviewController.getAllReviews)
   .post(
     authController.protect,
     authController.restrictTo("user"),

@@ -15,17 +15,6 @@ const fillterObj = (obj, ...allowFields) => {
   return newObject;
 };
 
-exports.getAllUsers = catchAsync(async (req, res) => {
-  const user = await User.find();
-  res.status(200).json({
-    status: "success",
-    results: user.length,
-    data: {
-      user,
-    },
-  });
-});
-
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
@@ -66,49 +55,49 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
       subject: "Confirm Account Deletion – AI-CRS",
       text: `Please confirm your account deletion: ${deleteURL}`,
       html: `
-  <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 40px;">
-    <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+      <div style="font-family: Arial, sans-serif; background-color: #f4f6f8; padding: 40px;">
+      <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
       
       <h2 style="color: #e63946; text-align: center;">Account Deletion Request</h2>
       
       <p style="font-size: 16px; color: #333;">
         Hello ${user.name},
-      </p>
-      
-      <p style="font-size: 15px; color: #555; line-height: 1.6;">
+        </p>
+        
+        <p style="font-size: 15px; color: #555; line-height: 1.6;">
         We received a request to delete your account. 
         If you made this request, please confirm by clicking the button below.
-      </p>
-
-      <div style="text-align: center; margin: 30px 0;">
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
         <a href="${deleteURL}" 
-           style="
-             background-color: #e63946;
-             color: #ffffff;
-             padding: 12px 25px;
-             text-decoration: none;
-             font-size: 16px;
-             border-radius: 5px;
-             display: inline-block;
-           ">
-           Confirm Account Deletion
+        style="
+        background-color: #e63946;
+        color: #ffffff;
+        padding: 12px 25px;
+        text-decoration: none;
+        font-size: 16px;
+        border-radius: 5px;
+        display: inline-block;
+        ">
+        Confirm Account Deletion
         </a>
-      </div>
-
-      <p style="font-size: 14px; color: #777; line-height: 1.6;">
+        </div>
+        
+        <p style="font-size: 14px; color: #777; line-height: 1.6;">
         If you did not request this, you can safely ignore this email. 
         Your account will remain active.
-      </p>
-
-      <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;" />
-
-      <p style="font-size: 12px; color: #999; text-align: center;">
+        </p>
+        
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;" />
+        
+        <p style="font-size: 12px; color: #999; text-align: center;">
         This link will expire in 10 minutes for security reasons.
-      </p>
-
-    </div>
-  </div>
-  `,
+        </p>
+        
+        </div>
+        </div>
+        `,
     });
   } catch (err) {
     console.log(err);
@@ -157,17 +146,13 @@ exports.confirmDelete = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: "error",
     message: "This route is not yet defined!",
   });
 };
+exports.getUser = Factory.getOne(User);
+exports.getAllUsers = Factory.getAll(User);
 exports.updateUser = Factory.updateOne(User);
 exports.deleteUser = Factory.deleteOne(User);
