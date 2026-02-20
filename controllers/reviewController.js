@@ -2,6 +2,7 @@ const Review = require("./../models/reviewModel");
 const APIFeatures = require("./../utils/apiFeatures");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
+const factory = require("./handlerFactory");
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
   let filter = {};
@@ -21,17 +22,13 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createNewReview = catchAsync(async (req, res, next) => {
+exports.setTourAndUserIds = (req, res, next) => {
   if (!req.body.tour) req.body.tour = req.params.tourId;
   if (!req.body.user) req.body.user = req.user.id;
-  const review = await Review.create(req.body);
-  res.status(201).json({
-    status: "success",
-    data: {
-      review,
-    },
-  });
-});
+  next();
+};
+
+exports.createNewReview = factory.createOne(Review);
 
 exports.getReviewById = catchAsync(async (req, res, next) => {
   const review = await Review.findById(req.params.id);
@@ -46,30 +43,6 @@ exports.getReviewById = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateReview = catchAsync(async (req, res, next) => {
-  const review = await Review.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!review) {
-    return next(new AppError("No review found with this Id", 404));
-  }
-  res.status(200).json({
-    status: "success",
-    data: {
-      review,
-    },
-  });
-});
+exports.updateReview = factory.updateOne(Review);
 
-exports.deleteReveiw = catchAsync(async (req, res, next) => {
-  const review = await Review.findByIdAndDelete(req.params.id);
-  if (!review) {
-    return next(new AppError("No review found with this Id", 404));
-  }
-
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+exports.deleteReveiw = factory.deleteOne(Review);

@@ -3,6 +3,7 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
+const Factory = require("./handlerFactory");
 
 const fillterObj = (obj, ...allowFields) => {
   const newObject = {};
@@ -123,11 +124,10 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     );
   }
 
-  // Return token for testing in Postman
   res.status(200).json({
     status: "success",
     message: "Confirmation email sent",
-    deleteToken, // <--- token exposed for testing
+    deleteToken,
   });
 });
 
@@ -169,15 +169,5 @@ exports.createUser = (req, res) => {
     message: "This route is not yet defined!",
   });
 };
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
+exports.updateUser = Factory.updateOne(User);
+exports.deleteUser = Factory.deleteOne(User);
