@@ -8,6 +8,7 @@ router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 router.post("/forgotpassword", authController.forgotPassword);
 router.patch("/resetpassword/:token", authController.resetPassword);
+router.use(authController.protect);
 router.patch(
   "/updatepassword",
   authController.protect,
@@ -24,6 +25,7 @@ router.patch("/updateMe", authController.protect, userController.updateMe);
 router.delete("/deleteMe", authController.protect, userController.deleteMe);
 router.get("/confirmDelete/:token", userController.confirmDelete);
 
+router.use(authController.restrictTo("admin"));
 router
   .route("/")
   .get(userController.getAllUsers)
