@@ -20,6 +20,9 @@ router
   );
 
 router
+  .route("/tours-whithin/:distance/center/:latlng/unit/:unit")
+  .get(tourController.getToursWhithin);
+router
   .route("/")
   .get(tourController.getAllTours)
   .post(
